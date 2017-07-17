@@ -40,14 +40,20 @@ static inline size_t RandMT(const size_t begin, const size_t end, std::mt19937_6
 // instead of using std::shuffle which uses unitform_distribution internally.
 // TODO: Switching to Boost would eliminate this problem.
 template <typename TVector>
-inline void RandomShuffleMT(TVector& v, std::mt19937_64& rng)
+inline void RandomShuffleMT(TVector& v, size_t begin, size_t end, std::mt19937_64& rng)
 {
-    foreach_index(currentLocation, v)
+    for(size_t i = begin; i < end; ++i)
     {
         // Pick a random location a location and swap with current
-        const size_t randomLocation = RandMT(0, v.size(), rng);
-        std::swap(v[currentLocation], v[randomLocation]);
+        const size_t randomLocation = RandMT(begin, end, rng);
+        std::swap(v[i], v[randomLocation]);
     }
+}
+
+template <typename TVector>
+inline void RandomShuffleMT(TVector& v, std::mt19937_64& rng)
+{
+    RandomShuffleMT(v, 0, v.size(), rng);
 }
 
 class RandomOrdering // note: NOT thread-safe at all
